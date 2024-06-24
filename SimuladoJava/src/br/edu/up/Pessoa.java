@@ -42,5 +42,6 @@ public class Pessoa {
     public String toCSV() {
         return getCodigo() + ";" + getNome()+ ";" + getRua()+ ";" + getCidade();
     }
+
     
 }

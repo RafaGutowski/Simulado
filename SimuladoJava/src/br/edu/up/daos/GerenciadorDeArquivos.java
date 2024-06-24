@@ -3,6 +3,7 @@ package br.edu.up.daos;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,12 @@ public class GerenciadorDeArquivos {
 
     private String header = "";
     private String nomeDoArquivoPessoa = "C:\\Users\\autologon\\Documents\\GitHub\\Simulado\\SimuladoJava\\src\\br\\edu\\up\\pessoas.csv";
+    private String Endereco = "C:\\Users\\autologon\\Documents\\GitHub\\Simulado\\SimuladoJava\\src\\br\\edu\\up\\enderecos.csv";
+    private String PessoaComEndereco = "C:\\Users\\autologon\\Documents\\GitHub\\Simulado\\SimuladoJava\\src\\br\\edu\\up\\pessoaComEndereco.csv";
 
-    public List<Pessoa> getPessoasComEndereco() {
+
+
+    public List<Pessoa> getPessoas() {
 
         List<Pessoa> listaPessoas = new ArrayList<>();
 
@@ -33,10 +38,9 @@ public class GerenciadorDeArquivos {
 
                 String codigo = dados[0];
                 String nome = dados[1];
-                String rua = dados[2];
-                String cidade = dados[3];
 
-                Pessoa pessoa = new Pessoa(codigo, nome, rua, cidade);
+
+                Pessoa pessoa = new Pessoa(codigo, nome, "", "");
 
             }
             leitorPessoa.close();
@@ -46,14 +50,46 @@ public class GerenciadorDeArquivos {
 
         return listaPessoas;
     }
+    public List<Pessoa> lerEndereco() {
 
-    public boolean gravarCarros(List<Pessoa> pessoas) {
+        List<Pessoa> listaDeEnderecos = new ArrayList<>();
+
+        try {
+            File arquivoLeituraEndereco = new File(Endereco);
+            Scanner leitorPessoa = new Scanner(arquivoLeituraEndereco);
+
+            if (leitorPessoa.hasNextLine()) {
+                header = leitorPessoa.nextLine();
+            }
+
+            while (leitorPessoa.hasNextLine()) {
+                String linha = leitorPessoa.nextLine();
+                String[] dados = linha.split(";");
+
+                String rua = dados[3];
+                String cidade = dados[4];
+
+
+                listaDeEnderecos.add(new Pessoa("", "", rua, cidade));
+
+            }
+            leitorPessoa.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Arquivo não encontrado! " + e.getMessage());
+        }
+
+        return listaDeEnderecos;
+    }
+
+    
+
+    public boolean gravarPessoaComEndereco(List<Pessoa> pessoas) {
         try {
             FileWriter arquivoGravar = new FileWriter(nomeDoArquivoPessoa);
             PrintWriter gravador = new PrintWriter(arquivoGravar);
 
-            gravador.println(header);
-            
+            gravador.println("Codigo;Nome;Rua;Cidade");
+
             for (Pessoa pessoa : pessoas) {
                 gravador.println(pessoa.toCSV());
             }
@@ -65,5 +101,7 @@ public class GerenciadorDeArquivos {
         }
         return false;
     }
+
+
 
 }
